@@ -1,0 +1,186 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-18 20:38-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# riseupvpny
+msgid "Everything is ready, start the software from your system's menu"
+msgstr "Todo esta listo, inicie el software desde el menú" 
+
+#: riseupvpny:37
+msgid "The computer is already connected to Riseup VPN"
+msgstr "La computadora ya esta conectada a Riseup VPN"
+
+#: riseupvpny:49
+msgid "Riseup VPN is disconnecting, do not worry"
+msgstr "Riseup VPN esta desconectándose, no se preocupe"
+
+#: riseupvpny:51
+msgid "You need to start the Riseup VPN Client again"
+msgstr "Necesita iniciar el Cliente Riseup VPN otra vez"
+
+#: riseupvpny:115
+msgid "Not Available"
+msgstr "No Disponible"
+
+#: riseupvpny:96 riseupvpny:105
+msgid "Riseup VPN: Disconnected"
+msgstr "Riseup VPN: Desconectado"
+
+#: riseupvpny:148
+msgid "Riseup VPN: tun kernel module not loaded, exiting"
+msgstr "Riseup VPN: el módulo tun del kernel no esta cargado, saliendo"
+
+#: riseupvpny:158
+msgid "Riseup VPN: ipv6 kernel module not loaded, exiting"
+msgstr "Riseup VPN: el módulo ipv6 del kernel no esta cargado, saliendo"
+
+#: riseupvpny:168
+msgid "Riseup VPN: wget not found, exiting"
+msgstr "Riseup VPN: wget no encontrado, saliendo"
+
+#: riseupvpny:178
+msgid "Riseup VPN: openvpn not found, exiting"
+msgstr "Riseup VPN: openvpn no encontrado, saliendo"
+
+#: riseupvpny:188
+msgid "Riseup VPN: yad not found, exiting"
+msgstr "Riseup VPN: yad no encontrado, saliendo"
+
+#: riseupvpny:207
+msgid "RiseUp VPN - log"
+msgstr "RiseUp VPN - log"
+
+#: riseupvpny:207
+msgid "Log location:"
+msgstr "Ubicación del log:"
+
+#: riseupvpny:207
+msgid "Refresh"
+msgstr "Recargar"
+
+#: riseupvpny:207
+msgid "Close"
+msgstr "Cerrar"
+
+#: riseupvpny:232
+msgid "Downloading the Riseup VPN server list..."
+msgstr "Descargando la lista de servidores de Riseup VPN..."
+
+#: riseupvpny:298
+msgid "Downloading Riseup VPN client key..."
+msgstr "Descargando la llave del cliente para Riseup VPN..."
+
+#: riseupvpny:323
+msgid "Downloading the Riseup VPN certificate..."
+msgstr "Descargando el certificado de Riseup VPN..."
+
+#: riseupvpny:348
+msgid ""
+"You need to start again the Riseup VPN Client to download the new credentials"
+msgstr ""
+"Necesita iniciar otra vez el Cliente Riseup VPN para descargar las credenciales nuevas"
+
+#: riseupvpny:380
+msgid "Riseup VPN: Connecting..."
+msgstr "Riseup VPN: Conectando..."
+
+#: riseupvpny:408
+msgid "Failed to establish a connection, try again with a different server\\n"
+msgstr "Falló el establecimiento de la conexión, intente otra vez, esta vez elija un servidor distinto\\n"
+
+#: riseupvpny:410
+msgid "Riseup VPN: Could not connect, try again choosing a different server"
+msgstr "Riseup VPN: No logró conectar, intente otra vez, esta vez elija un servidor distinto"
+
+#: riseupvpny:423
+msgid "Riseup VPN: Connected"
+msgstr "Riseup VPN: Conectado"
+
+#: riseupvpny:537
+msgid "RiseUp VPN"
+msgstr "RiseUp VPN"
+
+#: riseupvpny:540
+msgid ""
+"Riseup is a non-profit collective in Seattle, unlike most other VPN "
+"providers, Riseup does not log your IP address"
+msgstr ""
+"Riseup es un colectivo sin fines de lucro en Seattle, a diferencia " 
+"de la mayoría de los proveedores de VPN, Riseup no guarda su dirección de IP"
+
+#: riseupvpny:540
+msgid "At about every 90 day cycle, a new key needs to be reissued"
+msgstr "Aproximadamente cada 90 días una llave nueva necesita ser generada"
+
+#: riseupvpny:540
+msgid "The current key's expiration date is: "
+msgstr "Fecha de expiración de la llave actual: "
+
+#: riseupvpny:544
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: riseupvpny:545
+msgid "Connect"
+msgstr "Conectar"
+
+#: riseupvpny:542
+msgid ""
+"During the connection process, Riseup VPN might change the Gateway you choose"
+msgstr "" 
+"Durante el proceso de conexión, Riseup VPN podría cambiar el Servidor de Salida que elija"
+
+#: riseupvpny:548
+msgid "Gateway"
+msgstr "Servidor de Salida"
+
+#: riseupvpny:544
+msgid ""
+"\\nPort <i>1194</i> and Protocol <i>udp</i> are the default values, you will "
+"rarely need to change them"
+msgstr ""
+"\\nPuerto <i>1194</i> y Protocolo <i>udp</i> son los ajustes normales, "
+"rara vez necesitará cambiarlos"
+
+#: riseupvpny:550
+msgid "Port"
+msgstr "Puerto"
+
+#: riseupvpny:551
+msgid "Protocol"
+msgstr "Protocolo"
+
+#: riseupvpny:614
+msgid "Menu: Right click"
+msgstr "Menú: Clic derecho"
+
+#: riseupvpny:614
+msgid "Show log"
+msgstr "Muestra el log"
+
+#: riseupvpny:633
+msgid "Help"
+msgstr "Ayuda"
+
+#: riseupvpny:614
+msgid "Reissue keys & gateways"
+msgstr "Renueva llaves y servidores"
+
+#: riseupvpny:614
+msgid "Disconnect"
+msgstr "Desconectar"

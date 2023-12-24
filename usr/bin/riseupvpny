@@ -1,0 +1,632 @@
+#! /usr/bin/env bash
+# 
+# 2023/12/12
+#
+# This software or bash script connects you to Riseup's VPN service, https://riseup.net/en/vpn.
+#
+# It was developed in Puppy Linux FOSSAPUP 64, and needs the following software:
+#
+#   yad 12.3+
+#   GTK 3+
+#   OpenVPN 2.4.12+
+#   Wget 1.20+
+#   gtkdialog-splash (utility made specifically for Puppy Linux OSes? )
+#   sed, awk, etc.
+#   openssl
+#
+#
+#                        DEBUGGING OPTIONS
+# 
+#trap 'printf "\n" ; s=$?; echo >&2 "$0: Exit code on line "$LINENO": $BASH_COMMAND" ; exit $s ;' ERR
+#set -eou pipefail
+#set -x
+#
+#                        END OF DEBUGGING
+
+# If there is an error, kill all procesess
+trap 'disconnect_vpn' ERR
+
+
+# Locale Variables
+export TEXTDOMAIN=riseupvpny
+export OUTPUT_CHARSET=UTF-8
+
+# Documentation location
+export mandoc="/usr/share/doc/riseupvpny/riseupvpny.html"
+
+
+# First we need to see if the user called the --help flag from a terminal emulator
+#
+if [[ "$1" == "--help" ]] ; then
+
+#   The flag launches the documentation and exits, the idea is that 
+#   if the user calls the flag is because they can not initiate the YAD GUI
+    
+    defaultbrowser "${mandoc}"
+    
+    exit 0
+    
+fi
+
+# Perhaps the user's credentials expired, they need to have a way to renew them from terminal
+#
+if [[ "$1" == "--renew-credentials" ]] ; then
+    
+    rm --force "${HOME}/.riseupvpn/client.key" "${HOME}/.riseupvpn/servers_list.txt" "${HOME}/.riseupvpn/riseup.crt"
+    
+    printf "first_run=\"true\"" > "${HOME}/.riseupvpn/first_run"
+    
+    printf "\n$(gettext "Everything is ready, start the software from your system's menu")\n"
+    
+    exit 0
+
+fi
+
+# Lets see if there is a riseup vpn openvpn instance
+# running, if it is, then stop it, this is useful if you lose xorgserver, 
+# openvpn might not die if xorg server exits.
+
+if pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" &> /dev/null ; then
+
+    gtkdialog-splash -timeout "5" -close "mouse" -icon "gtk-info" -border "false" -wrap "false" -placement "center" -text "$(gettext 'The computer is already connected to Riseup VPN')" &> /dev/null
+
+#   If there is, indeed, an openvpn instance running, and there isn't a 
+#   riseup vpn icon showing in the tray, it is better to disconnect and start 
+#   the connection proccess again, the icon provides a visual cue
+#   to know if the computer is  connected to the vpn service, and it 
+#   also offers options to disconnect, show a log, and renew credentials, etc
+
+    if ! pgrep --full "yad --notification.*show_log*" &> /dev/null ; then 
+        
+        pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" | xargs --max-procs=1 --max-args=1 kill -15 &> /dev/null
+        
+        gtkdialog-splash -timeout "4" -close "mouse" -icon "/usr/share/pixmaps/puppy/wifi_open.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN is disconnecting, do not worry')" &> /dev/null
+        
+        gtkdialog-splash -close "mouse" -timeout 7 -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'You need to start the Riseup VPN Client again')" &> /dev/null
+    
+    fi
+    
+    exit 0
+    
+fi
+# configuration variables are loaded from the previous session or during the
+# first fun of the script/sofware
+source "${HOME}/.riseupvpn/first_run"
+source "${HOME}/.riseupvpn/c_port"
+source "${HOME}/.riseupvpn/c_server"
+source "${HOME}/.riseupvpn/c_protocol"
+
+#                          API URLS
+#
+# We will connect to this api to get certificate, servers list, and key
+gateway_url_api="https://api.black.riseup.net/1/configs/eip-service.json"
+certificate_url_api="https://black.riseup.net/ca.crt"
+key_url_api="https://api.black.riseup.net/1/cert"
+
+
+
+#                         FUNCTIONS
+#
+#                  
+#
+#
+function key_expiration_date(){
+# The user needs to know if their key is about to expire
+
+    if [[ -a "${HOME}/.riseupvpn/client.key" ]]; then
+        
+       export key_expiration_date="$(openssl x509 -enddate -noout -in "${HOME}/.riseupvpn/client.key" | awk -F"=" '{print $2}')"
+        
+    else
+    
+       export key_expiration_date="$(gettext 'Not Available')"
+    
+    fi
+    
+
+}
+export key_expiration_date
+
+
+
+
+
+
+function disconnect_vpn(){
+
+    #set -x
+    if [[ -n "$pid_of_openvpn" ]] ; then
+    #set -x
+        
+        kill -15 "${pid_of_openvpn}" &>/dev/null
+        
+        gtkdialog-splash -timeout "7" -close "mouse" -icon "/usr/share/pixmaps/puppy/wifi_open.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Disconnected')" &> /dev/null &
+        
+
+    fi
+
+    
+
+    if pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" &> /dev/null ; then
+    #set -x
+        gtkdialog-splash -timeout "7" -close "mouse" -icon "/usr/share/pixmaps/puppy/wifi_open.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Disconnected')" &> /dev/null &
+        
+        pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" | xargs --max-procs=1 --max-args=1 kill -15 &> /dev/null
+        
+    fi
+
+
+
+    if pgrep --full "yad --notification.*show_log*" &> /dev/null ; then
+    #set -x
+        pgrep --full "yad --notification.*show_log*" | xargs --max-procs=1 --max-args=1 kill -15 &> /dev/null
+    
+    fi
+
+    exit 0
+
+}
+
+export -f disconnect_vpn
+
+
+
+
+
+
+
+function dependencies(){
+# We need to check our dependencies
+    lsmod | grep "tun" &>/dev/null
+    tun_check=$?
+    lsmod | grep "ipv6" &>/dev/null
+    ipv6_check=$?
+    which wget &>/dev/null
+    wget_check=$?
+    which openvpn &>/dev/null
+    openvpn_check=$?
+    which yad &>/dev/null
+    yad_check=$?
+    
+    
+# Tell the user there are problems with any of the dependencies, and exit the script    
+    if [ $tun_check -ne  0 ] ; then
+        
+       yad --splash --skip-taskbar --image="gtk-dialog-error" --timeout="4" --on-top --undecorated --no-buttons --center --text="$(gettext 'Riseup VPN: tun kernel module not loaded, exiting')" &
+       
+       printf "kernel module tun not loaded"
+       
+       exit 1
+        
+    fi
+    
+    if [ $ipv6_check -ne  0 ] ; then
+        
+       yad --splash --skip-taskbar --image="gtk-dialog-error" --timeout="4" --on-top --undecorated --no-buttons --center --text="$(gettext 'Riseup VPN: ipv6 kernel module not loaded, exiting')" &
+       
+       printf "kernel module ipv6 not loaded"
+       
+       exit 1
+        
+    fi
+    
+    if [ $wget_check -ne  0 ] ; then
+        
+       yad --splash --skip-taskbar --image="gtk-dialog-error" --timeout="4" --on-top --undecorated --no-buttons --center --text="$(gettext 'Riseup VPN: wget not found, exiting')" &
+       
+       printf "wget not found"
+       
+       exit 1
+        
+    fi
+    
+    if [ $openvpn_check -ne  0 ] ; then
+       
+       yad --splash --skip-taskbar --image="gtk-dialog-error" --timeout="4" --on-top --undecorated --no-buttons --center --text="$(gettext 'Riseup VPN: openvpn not found, exiting')" &
+       
+       printf "openvpn not found"
+       
+       exit 1
+       
+    fi
+    
+    if [ $yad_check -ne  0 ] ; then
+        
+       yad --splash --skip-taskbar --image="gtk-dialog-error" --timeout="4" --on-top --undecorated --no-buttons --center --text="$(gettext 'Riseup VPN: yad not found, exiting')" &
+       
+       printf "yad not found"
+       
+       exit 1
+       
+    fi
+
+}
+
+
+
+
+
+
+
+function show_log(){
+
+    
+    yad --window-icon="/usr/share/icons/vpn.svg" --width=800 --height=375 --title="$(gettext 'RiseUp VPN - log')" --text-align="center" --text="$(gettext 'Log location:') /tmp/riseupvpn.log" --text-info --filename="/tmp/riseupvpn.log" --justify="left" --button="$(gettext 'Refresh')""!view-refresh:bash -c reload_log" --button="$(gettext 'Close')"!"process-stop":"0"
+    
+    
+}
+
+export -f show_log
+
+
+
+
+ 
+
+
+function get_servers(){
+# We only get the gateway urls listed as openvpn, not the obfs4
+
+    wget --timeout=10 --no-verbose --check-certificate=quiet -O - "${gateway_url_api}" |
+    awk 'BEGIN{RS="\"type\":\"" ; FS=":"} /openvpn/ \
+       {$7=$7 ; sub(/"capabilities"/,"",$7) ; split($7,b,"\"",seps); \
+       cities[++n]=sprintf("%s",b[2]);  split($5,h,"\"",seps2); \
+       address[++m]=sprintf("%s",h[2])}\
+       END{for( i in cities){printf("%s|%s\n",address[i],cities[i])}}' > "${HOME}/.riseupvpn/servers_list.txt" &
+    
+    pidserverlistdownload=$!
+    
+    gtkdialog-splash -close "never" -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'Downloading the Riseup VPN server list...')" &
+    
+    pidserverlistsplashmessage=$!
+    
+    wait "${pidserverlistdownload}"
+    
+    kill -15 "${pidserverlistsplashmessage}"
+
+}
+
+export -f get_servers
+
+
+
+
+
+
+
+function get_key(){
+
+    
+    wget --timeout=10 --no-verbose --check-certificate=quiet --output-document="${HOME}/.riseupvpn/client.key" "${key_url_api}"  &
+
+    pidkeydownload=$!
+    
+    gtkdialog-splash -close "never" -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'Downloading Riseup VPN client key...')" &
+    
+    pidkeysplashmessage=$!
+    
+    wait "${pidkeydownload}"
+
+    kill -15 "${pidkeysplashmessage}"
+
+}
+
+export -f get_key
+
+
+
+
+
+
+
+function get_crt(){
+#set -x
+ 
+    wget --timeout=10 --no-verbose --check-certificate=quiet --output-document="${HOME}/.riseupvpn/riseup.crt" "${certificate_url_api}" &
+
+    pidcertdownload=$!
+    
+    gtkdialog-splash -close "never" -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'Downloading the Riseup VPN certificate...')" &
+    
+    pidcertsplashmessage=$!
+    
+    wait "${pidcertdownload}"
+    
+    kill -15 "${pidcertsplashmessage}"
+
+
+}
+
+export -f get_crt
+
+
+
+
+
+
+
+function renew_credentials(){
+    
+    printf "first_run=\"true\"" > "${HOME}/.riseupvpn/first_run"
+    
+    rm --force "${HOME}/.riseupvpn/client.key" "${HOME}/.riseupvpn/servers_list.txt" "${HOME}/.riseupvpn/riseup.crt"
+    #set -x
+    if [[ -n "$pid_of_openvpn" ]] ; then
+    #set -x
+        
+        kill -15 "${pid_of_openvpn}" &>/dev/null
+        
+        gtkdialog-splash -timeout "3" -close "mouse" -icon "/usr/share/pixmaps/puppy/wifi_open.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Disconnected')" &> /dev/null
+        
+
+    fi
+    
+    gtkdialog-splash -timeout 7 -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'You need to start again the Riseup VPN Client to download the new credentials')" &
+
+}
+
+export -f renew_credentials
+
+
+
+
+
+
+
+function reload_log(){
+
+    
+    pgrep -f "yad.*--text-info.*riseupvpn\.log.*" | xargs --max-procs=1 --max-args=1 kill -15
+    
+    show_log
+    
+    
+}
+
+export -f reload_log
+
+
+
+
+
+
+
+function openvpn_status(){
+#    set -x
+    gtkdialog-splash -close "never" -icon "gtk-info" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Connecting...')" &> /dev/null &
+     
+    export pidofconnectingmsg=$!
+    
+    counter=0
+    
+    until tail --lines=10 "/tmp/riseupvpn.log" | grep --perl-regexp --silent "Initialization Sequence Completed$" ; do
+#    set -x
+        
+        
+        printf "connecting to riseupvpn\n"
+    
+        sleep 1s
+    
+        let counter+=1
+    
+        if [[ $counter -ge 15 ]]; then 
+
+#    set -x
+            
+            kill -15 "${pidofconnectingmsg}" &> /dev/null
+            
+            if pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" &> /dev/null ; then
+
+                pgrep --full "openvpn --config ${HOME}/.riseupvpn/riseup_configuration.ovpn" | xargs --max-procs=1 --max-args=1 kill -15 &> /dev/null
+        
+            fi
+            
+            printf "$(gettext 'Failed to establish a connection, try again with a different server\n')"
+            
+            gtkdialog-splash -timeout "6" -close "mouse" -icon "/usr/share/pixmaps/puppy/shield_no.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Could not connect, try again choosing a different server')" -wrap "false"
+            
+            exit 0
+        
+        
+        fi
+    
+    done
+    
+   
+    kill -15 "${pidofconnectingmsg}" &> /dev/null
+    
+    
+    gtkdialog-splash -timeout "7" -close "mouse" -icon "/usr/share/pixmaps/puppy/wifi_encrypted.svg" -border "false" -placement "center" -text "$(gettext 'Riseup VPN: Connected')" -bg "green" &> /dev/null &
+
+
+}
+
+export -f openvpn_status
+
+
+
+
+
+#
+#
+#               START OF THE 'ACTUAL SCRIPT'
+#               UP TO THIS POINT WE WERE JUST
+#               SETTING THE STAGE
+#
+#
+#                    
+# Load Kernel Modules
+#   most puppy linuxes do not load these modules automatically, so we load them
+modprobe tun &> /dev/null
+modprobe ipv6 &> /dev/null
+
+# Now we check if the software needed is present in the system
+#
+dependencies
+
+# Find out the user's key expiration date
+#
+key_expiration_date
+
+# Is this the first time running the script? if so, 
+# We need to get the server list, the key, and server certificate, however,
+# We are only using the server type, openvpn, not the tor type, obsf4.
+# This part will not be executed if the usear has used the script before.   
+#set -x
+if [[ $first_run == "true" ]] ; then
+#set -x         
+         get_servers
+         sleep 1s
+         get_key
+         sleep 1s
+#        sleep needed here because the software gtkdialog-splash keeps
+#        crashing, my especulation is that the downloads are too fast,
+#        causing the software to crash
+         
+         sleep 1s
+         
+         get_crt
+         sleep 1s
+         printf "first_run=\"false\"" > "${HOME}/.riseupvpn/first_run"
+    
+         key_expiration_date
+        
+        
+fi
+
+# We finally start preparing to draw the Start Window, but before we can draw it,
+# we need to know the previous settings so that
+# we can provide the user with that information.    
+#
+# Getting Settings from the previous session
+#   server/gateway
+
+old_svl="${gateway}" 
+#   port
+old_pl="${port}"
+#   protocol
+old_prl="${protocol}"
+
+# This code prepares the strings to be used in the 3 --field flags of the yad Start Window,
+#   we wrangle this data, so that the "selected" settings when the window opens, correspond
+#   to the selections made by the user during the previous session.
+#   Yad's documentation states that the hat ^ character is used to signal the 'default' option in the Combo Box dialog
+# 
+string_svl=$(cat "${HOME}/.riseupvpn/servers_list.txt"    |
+             awk 'BEGIN{                                     \
+				ORS="!"   ;                                  \
+				RS="\n"   ;                                  \
+				}                                            \
+                {                                            \
+                  $1=$1   ;                                  \
+				  print $0 ;                                 \
+				}'                                        |
+			sed 's/!$//g'                                 |
+            sed 's/'"${old_svl}"'/'"^${old_svl}"'/g')
+
+string_pl=$(printf "1194!80!53" | sed 's/'"${old_pl}"'/'"^${old_pl}"'/g')
+
+string_prl=$(printf "udp!tcp" | sed 's/'"${old_prl}"'/'"^${old_prl}"'/g')
+
+
+# We need to change IFS to capture the output of the Start Window in a
+# bash array, yad uses pipe characters as field separators.
+old_ifs=$IFS
+IFS="|"
+#
+#
+#
+#             FINALLY THE CODE TO DRAW THE START WINDOW
+#
+# 
+
+user_settings=($(yad --title="$(gettext 'RiseUp VPN')" \
+--window-icon="/usr/share/icons/vpn.svg" \
+--image="/usr/share/icons/riseup.svg" \
+--text=$(gettext "Riseup is a non-profit collective in Seattle, unlike most other VPN providers, Riseup does not log your IP address")"\n\n"$(gettext "At about every 90 day cycle, a new key needs to be reissued")"\n"$(gettext "The current key's expiration date is: ")"<b>""${key_expiration_date}""</b>" \
+--width=568 \
+--height=440 \
+--center \
+--button="$(gettext 'Cancel')!window-close:1" \
+--button="$(gettext 'Connect')"!"/usr/share/icons/connect_riseup.svg":"0" \
+--form \
+--field="$(gettext 'During the connection process, Riseup VPN might change the Gateway you choose')":"LBL" "" \
+--field="$(gettext 'Gateway')":"CB" "${string_svl}" \
+--field="$(gettext "\nPort <i>1194</i> and Protocol <i>udp</i> are the default values, you will rarely need to change them")":"LBL" "" \
+--field="$(gettext 'Port')":"CB" "${string_pl}" \
+--field="$(gettext 'Protocol')":"CB" "${string_prl}"))
+
+#
+#   When the user finishes with the Start Window, if they cancel, no changes are
+#   made to the configuration files, and the software/script exits
+#
+if [[ $? -ge 1  ]]; then
+    
+    kill -15 $$
+fi
+
+IFS=$old_ifs
+
+#
+# If the user either changed none, some or all the settings, and clicked Connect 
+# we need to write the changes made to the corresponding configuration files
+#
+#
+
+if [[ $old_svl != "${user_settings[1]}" ]] ; then 
+
+    printf "gateway=\"${user_settings[1]}\"" > "${HOME}/.riseupvpn/c_server"
+    
+    sed -i 's/'"${old_svl}"'/'"${user_settings[1]}"'/1' "${HOME}/.riseupvpn/riseup_configuration.ovpn"
+
+fi
+
+if [[ $old_pl != "${user_settings[4]}" ]] ; then 
+
+    printf "port=\"${user_settings[4]}\"" > "${HOME}/.riseupvpn/c_port"
+    
+    sed -i 's/'"${old_pl}"'/'"${user_settings[4]}"'/1' "${HOME}/.riseupvpn/riseup_configuration.ovpn"
+    
+fi
+
+if [[ $old_prl != "${user_settings[5]}" ]] ; then 
+
+    printf "protocol=\"${user_settings[5]}\"" > "${HOME}/.riseupvpn/c_protocol"
+    
+    sed -i 's/'"${old_prl}"'/'"${user_settings[5]}"'/1' "${HOME}/.riseupvpn/riseup_configuration.ovpn"
+    
+fi
+
+
+#      
+#                NOW WE LAUNCH OPENVPN TO FINALLY
+#                CONNECT TO RISEUP'S VPN SERVICE
+#
+sleep 1s
+
+
+openvpn --config "${HOME}/.riseupvpn/riseup_configuration.ovpn" &> "/tmp/riseupvpn.log" &
+export pid_of_openvpn=$!
+    
+openvpn_status
+
+
+# With the connection established, we open a tray icon that will allow
+# us to control the script.
+
+
+
+yad --notification --image="/usr/share/icons/vpnriseup.svg" --text="$(gettext 'Menu: Right click')" --icon-size="48" --no-middle --command=":" --menu="$(gettext 'Show log')!bash -c show_log!document-new|$(gettext 'Reissue keys & gateways')!bash -c renew_credentials!view-refresh|$(gettext 'Help')!bash -c \"defaultbrowser ${mandoc}\"!help-browser|$(gettext 'Disconnect')!bash -c disconnect_vpn!gtk-disconnect" &> /dev/null &
+
+
+# Here we wait for the user to close openvpn a or failure
+#set -x
+wait "${pid_of_openvpn}"
+
+# When openvpn fails, I want the icon tray to die too, it will work as a
+# cue to the user, if the vpn tray icon is missing then something is
+# wrong with your connection to the vpn service
+#set -x
+disconnect_vpn
+
+exit 0

@@ -1,0 +1,111 @@
+<h1 id="riseup-vpn-client">Riseup VPN Client</h1>
+<p>This software/bash script is a simple front end to the openvpn command line utility, it was written in Puppy Linux FOSSAPUP to handle the connection to the Riseup VPN service</p>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li><p>OpenVPN 2.4.12</p>
+</li>
+<li><p>YAD</p>
+</li>
+<li><p>Wget 1.20.3</p>
+</li>
+<li><p>GNU bash 5.0.17</p>
+</li>
+<li><p>gtkdialog-splash (puppy linux only app?)</p>
+</li>
+<li><p>ipv6 kernel module</p>
+</li>
+<li><p>tun kernel module</p>
+</li>
+<li><p>Openssl</p>
+</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<ul>
+<li><p>Make sure you have a working internet connection to the outside world, then launch the script/program from your system&#39;s menu, the rest is self-explanatory, if a successful connection is established, a tray icon will appear, Right-Click on it to see the menu options available</p>
+</li>
+<li><p>If you can not start the software/script read the documentation, to access it, in the terminal run: <code>riseupvpny --help</code> </p>
+</li>
+<li><p>The software script is a front end to openvpn, you can add or remove settings by directly modifying the file <code>/root/.riseupvpn/riseup_configuration.ovpn</code></p>
+</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>First and foremost, make sure you have a working internet connection to the outside world</strong></p>
+<p><strong>If there are firewalls turned on, turn them off</strong></p>
+<p><strong>If you can not start the software/script you can access this document via terminal: <code>riseupvpny --help</code></strong></p>
+<p><strong>Access key files expire, if you have been connecting for a while, perhaps it is time to get a new one, in terminal run: <code>riseupvpny --renew-credentials</code></strong></p>
+<h3 id="when-the-program-is-started-the-message-the-computer-is-already-connected-to-riseup-vpn-appears-on-the-screen">When the program is started, the message &quot;The computer is already connected to Riseup VPN&quot; appears on the screen</h3>
+<ol>
+<li><p>In the terminal emulator or console type: <code>killall openvpn</code>, and press ENTER</p>
+</li>
+<li><p>Restart the program</p>
+</li>
+</ol>
+<h3 id="the-start-window-entries-such-as-gateway-protocol-or-port-are-empty-or-have-gibberish">The start window entries, such as Gateway, Protocol, or Port, are empty, or have gibberish</h3>
+<ol>
+<li><p>Click Cancel</p>
+</li>
+<li><p>Follow steps at the beginning of the Troubleshooting section</p>
+</li>
+</ol>
+<h3 id="if-everything-fails">If Everything Fails</h3>
+<ol>
+<li><p>Uninstall the PET package</p>
+</li>
+<li><p>Delete the /root/.riseupvpn directory and its contents</p>
+</li>
+<li><p>Install the PET package again</p>
+</li>
+</ol>
+<h2 id="things-to-consider">Things To Consider</h2>
+<ul>
+<li><p>The script is heavily commented, it goes through the thought process of the person who wrote it, if you read it, you will have a better understanding of what it does, you are encouraged to improve it, especially since it was written by a complete amateur.</p>
+</li>
+<li><p>Older YAD versions may cause icon rendering problems</p>
+</li>
+<li><p>The PET package installs the following files:</p>
+</li>
+</ul>
+<pre><code>/
+├── root
+│   └── <span class="hljs-selector-class">.riseupvpn</span>
+│       ├── c_port
+│       ├── c_protocol
+│       ├── c_server
+│       ├── first_run
+│       └── riseup_configuration<span class="hljs-selector-class">.ovpn</span>
+└── usr
+    ├── bin
+    │   └── riseupvpny
+    └── share
+        ├── applications
+        │   └── riseupvpny<span class="hljs-selector-class">.desktop</span>
+        ├── doc
+        │   └── riseupvpny
+        │       └── riseupvpny<span class="hljs-selector-class">.html</span>
+        ├── icons
+        │   ├── connect_riseup<span class="hljs-selector-class">.svg</span>
+        │   ├── riseup<span class="hljs-selector-class">.svg</span>
+        │   ├── vpnriseup<span class="hljs-selector-class">.svg</span>
+        │   └── vpn<span class="hljs-selector-class">.svg</span>
+        └── locale
+            └── es
+                └── LC_MESSAGES
+                    ├── riseupvpny<span class="hljs-selector-class">.mo</span>
+                    ├── riseupvpny<span class="hljs-selector-class">.po</span>
+                    └── riseupvpny<span class="hljs-selector-class">.pot</span>
+
+<span class="hljs-number">12</span> directories, <span class="hljs-number">15</span> files
+</code></pre><ul>
+<li><p>Once the script/software is run for the first time, it creates four files:</p>
+<ul>
+<li><p>Three in the /root/.riseupvpn directory, a certificate file (riseup.crt), a key file (client.key), and a list of servers file (servers_list.txt)</p>
+</li>
+<li><p>A log file (riseupvpn.log) in the /tmp directory</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="learn-more-about-riseup">Learn More About Riseup</h2>
+<p><a href="https://riseup.net/">https://riseup.net/</a></p>
+<h2 id="learn-more-about-openvpn-connetivity-issues">Learn More About Openvpn Connetivity Issues</h2>
+<p><a href="https://openvpn.net/community-resources/how-to/#starting-up-the-vpn-and-testing-for-initial-connectivity">https://openvpn.net/community-resources/how-to/#starting-up-the-vpn-and-testing-for-initial-connectivity</a></p>

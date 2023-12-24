@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Riseup VPN Client
+Comment=A front end client written in YAD to connect to  Riseup VPN using OpenVPN
+Exec=riseupvpny
+Terminal=false
+Icon=/usr/share/icons/riseup.svg
+Categories=Network
+GenericName=Riseup VPN Client

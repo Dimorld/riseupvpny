@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-23 00:17-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: riseupvpny:58
+msgid "Everything is ready, start the software from your system's menu"
+msgstr ""
+
+#: riseupvpny:70
+msgid "The computer is already connected to Riseup VPN"
+msgstr ""
+
+#: riseupvpny:82
+msgid "Riseup VPN is disconnecting, do not worry"
+msgstr ""
+
+#: riseupvpny:84
+msgid "You need to start the Riseup VPN Client again"
+msgstr ""
+
+#: riseupvpny:115
+msgid "Not Available"
+msgstr ""
+
+#: riseupvpny:142 riseupvpny:151 riseupvpny:358
+msgid "Riseup VPN: Disconnected"
+msgstr ""
+
+#: riseupvpny:194
+msgid "Riseup VPN: tun kernel module not loaded, exiting"
+msgstr ""
+
+#: riseupvpny:204
+msgid "Riseup VPN: ipv6 kernel module not loaded, exiting"
+msgstr ""
+
+#: riseupvpny:214
+msgid "Riseup VPN: wget not found, exiting"
+msgstr ""
+
+#: riseupvpny:224
+msgid "Riseup VPN: openvpn not found, exiting"
+msgstr ""
+
+#: riseupvpny:234
+msgid "Riseup VPN: yad not found, exiting"
+msgstr ""
+
+#: riseupvpny:253
+msgid "RiseUp VPN - log"
+msgstr ""
+
+#: riseupvpny:253
+msgid "Log location:"
+msgstr ""
+
+#: riseupvpny:253
+msgid "Refresh"
+msgstr ""
+
+#: riseupvpny:253
+msgid "Close"
+msgstr ""
+
+#: riseupvpny:278
+msgid "Downloading the Riseup VPN server list..."
+msgstr ""
+
+#: riseupvpny:303
+msgid "Downloading Riseup VPN client key..."
+msgstr ""
+
+#: riseupvpny:328
+msgid "Downloading the Riseup VPN certificate..."
+msgstr ""
+
+#: riseupvpny:363
+msgid ""
+"You need to start again the Riseup VPN Client to download the new credentials"
+msgstr ""
+
+#: riseupvpny:395
+msgid "Riseup VPN: Connecting..."
+msgstr ""
+
+#: riseupvpny:423
+msgid "Failed to establish a connection, try again with a different server\\n"
+msgstr ""
+
+#: riseupvpny:425
+msgid "Riseup VPN: Could not connect, try again choosing a different server"
+msgstr ""
+
+#: riseupvpny:438
+msgid "Riseup VPN: Connected"
+msgstr ""
+
+#: riseupvpny:532
+msgid "RiseUp VPN"
+msgstr ""
+
+#: riseupvpny:535
+msgid ""
+"Riseup is a non-profit collective in Seattle, unlike most other VPN "
+"providers, Riseup does not log your IP address"
+msgstr ""
+
+#: riseupvpny:535
+msgid "At about every 90 day cycle, a new key needs to be reissued"
+msgstr ""
+
+#: riseupvpny:535
+msgid "The current key's expiration date is: "
+msgstr ""
+
+#: riseupvpny:539
+msgid "Cancel"
+msgstr ""
+
+#: riseupvpny:540
+msgid "Connect"
+msgstr ""
+
+#: riseupvpny:542
+msgid ""
+"During the connection process, Riseup VPN might change the Gateway you choose"
+msgstr ""
+
+#: riseupvpny:543
+msgid "Gateway"
+msgstr ""
+
+#: riseupvpny:544
+msgid ""
+"\\nPort <i>1194</i> and Protocol <i>udp</i> are the default values, you will "
+"rarely need to change them"
+msgstr ""
+
+#: riseupvpny:545
+msgid "Port"
+msgstr ""
+
+#: riseupvpny:546
+msgid "Protocol"
+msgstr ""
+
+#: riseupvpny:609
+msgid "Menu: Right click"
+msgstr ""
+
+#: riseupvpny:609
+msgid "Show log"
+msgstr ""
+
+#: riseupvpny:609
+msgid "Reissue keys & gateways"
+msgstr ""
+
+#: riseupvpny:609
+msgid "Help"
+msgstr ""
+
+#: riseupvpny:609
+msgid "Disconnect"
+msgstr ""
