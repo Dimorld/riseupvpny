@@ -3,7 +3,6 @@
 This software/bash script is a simple front end to the openvpn command line utility, it was written in Puppy Linux FOSSAPUP to handle the connection to the Riseup VPN service
 
 [a relative link](jam32.mov)
-[a relative link](path%20with%20spaces/other_file.md)
 
 ## Dependencies
 
