@@ -2,8 +2,6 @@
 
 This software/bash script is a simple front end to the openvpn command line utility, it was written in Puppy Linux FOSSAPUP to handle the connection to the Riseup VPN service
 
-[a relative link](jam32.mov)
-
 ## Dependencies
 
 - OpenVPN 2.4.12
